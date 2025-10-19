@@ -14,10 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
+from rest_framework import status
+
+
+def custom_404_handler(request, exception=None):
+    """Handler customizado para retornar 404 em JSON."""
+    return Response(
+        {"error": "Endpoint not found", "detail": "URL does not exist"},
+        status=status.HTTP_404_NOT_FOUND,
+    )
+
+
+def custom_500_handler(request):
+    """Handler customizado para retornar 500 em JSON."""
+    return Response(
+        {"error": "Internal Server Error", "detail": "Unexpected error"},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("submissions/", include("submission.urls")),
 ]
+
+handler404 = custom_404_handler
+handler500 = custom_500_handler
