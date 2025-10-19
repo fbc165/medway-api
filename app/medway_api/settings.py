@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 import os
 from pathlib import Path
 
@@ -25,7 +26,7 @@ SECRET_KEY = "django-insecure-x95(-4u6g#ewh23@v7%wvz_(=ml^w64-iu&k#6*aw4-8%c=9z^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     "student",
     "question",
     "exam",
-    "utils"
+    "utils",
+    "submission",
 ]
 
 MIDDLEWARE = [
@@ -81,12 +83,12 @@ WSGI_APPLICATION = "medway_api.wsgi.application"
 
 DATABASES = {
     "default": {
-        'ENGINE': "django.db.backends.postgresql",
-        'NAME': os.environ.get("POSTGRES_DB", "teste"),
-        'USER': os.environ.get("POSTGRES_USER"),
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get("POSTGRES_PORT", "5432"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "teste"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOST", "db"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
 
@@ -132,13 +134,20 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_PAGINATION_CLASS": ("rest_framework.pagination.PageNumberPagination"),
     "PAGE_SIZE": 30,
-    'DEFAULT_VERSION': 'v1',
+    "DEFAULT_VERSION": "v1",
+    # Força sempre JSON (nunca HTML browsable API)
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    # Parser para aceitar JSON no body
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
+    # Tratamento de exceções sempre em JSON
+    "EXCEPTION_HANDLER": "rest_framework.views.exception_handler",
 }
 
-AUTH_USER_MODEL = 'student.Student'
-
+AUTH_USER_MODEL = "student.Student"
